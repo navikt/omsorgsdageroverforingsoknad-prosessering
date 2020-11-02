@@ -1,139 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="NO">
+
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>Melding om overføring av omsorgsdager</title>
-    {{#block 'style' }}
+    <meta name="subject" content="Melding om overføring av omsorgsdager" />
+    <meta name="author" content="nav.no" />
+    <meta name="description"
+          content="Melding om overføring av omsorgsdager {{soknad_mottatt_dag}} {{ soknad_mottatt }}" />
+    <bookmarks>
+        <bookmark name="Søker" href="#søker" />
+        <bookmark name="Overføring" href="#overføring" />
+        <bookmark name="Fosterbarn" href="#fosterbarn" />
+        <bookmark name="Arbeidssituasjon" href="#arbeidssituasjon" />
+        <bookmark name="Medlemskap" href="#medlemskap" />
+        <bookmark name="Samtykke" href="#samtykke" />
+    </bookmarks>
+    {{#block 'style-common' }}
     {{/block}}
-
-    {{#*inline "jaNeiCheckbox"}}
-        {{#if parameter}}
-            <img class="checkbox" src="{{ image "Checkbox_on.png" }}"/> Ja
-            <img class="checkbox" src="{{ image "Checkbox_off.png" }}"/> Nei
-        {{else}}
-            <img class="checkbox" src="{{ image "Checkbox_off.png" }}"/> Ja
-            <img class="checkbox" src="{{ image "Checkbox_on.png" }}"/> Nei
-        {{/if}}
-    {{/inline}}
-
 </head>
+
 <body>
-<div id="header">
-    <img class="navlogo" src="{{ image "Navlogo.png" }}"/>
-    <h1 class="title">Melding om overføring av omsorgsdager</h1>
-</div>
-<div class="container">
-    <div id="container_top">
-        <div class="nokkeldata">
-            <br/><br/>
-            <p>
-                <span class="nokkeldata__overskrift">Sendt til NAV</span><br/>
-                {{soknad_mottatt_dag}} {{ soknad_mottatt }}
-            </p>
+    <h1 id="header">
+        Melding om overføring av omsorgsdager
+    </h1>
+    <p class="nokkelinfo">
+        <strong>Sendt til NAV</strong>
+        {{soknad_mottatt_dag}} {{ soknad_mottatt }}
+    </p>
+
+    <div class="innholdscontainer">
+        <div class="person" id="søker">
+            <p class="navn">{{ søker.navn }}</p>
+            <p>{{ søker.fødselsnummer }}<br /></p>
         </div>
-        <div class="personinfo">
-            <div class="persontekst">
-                <div class="persontekst__sidetopp">
-                    <img class="ikon" src="{{ image "Personikon.png" }}"/>
-                    <div class="persontekst__personalia">
-                        <p class="navn">
-                            {{ søker.navn }}
-                        </p>
-                        <p class="id">
-                            {{ søker.fødselsnummer }}<br/>
-                        </p>
+
+        <!-- Overføring -->
+        <section id="overføring">
+            <h2>Overføring av omsorgsdager</h2>
+            <p class="sporsmalstekst">Hvem skal omsorgsdagene overføres til? </p>
+            <p>{{navnMottaker}} ({{fnrMottaker}})</p>
+            <hr />
+            <p class="sporsmalstekst">Hvor mange omsorgsdager skal overføres?</p>
+            <p>{{antallDager}}</p>
+            <hr />
+            {{#if stengingsperiode}}
+                <p class="sporsmalstekst">Fra når gjelder overføringen?</p>
+                <p>{{stengingsperiode}}</p>
+            {{/if}}
+        </section>
+
+        <!-- Fosterbarn -->
+        <section id="fosterbarn">
+            {{#if fosterbarnListe.fosterbarn}}
+                <h2>Fosterbarn</h2>
+                {{# each fosterbarnListe.fosterbarn as |barn|}}
+                    <div class="person">
+                        <div class="id">
+                            <p>Fødselsnummer:</p>
+                            {{ barn.fnr }}
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                {{/each}}
+            {{/if}}
+        </section>
+
+        <!-- ARBEIDSSITUASJON -->
+        <section id="arbeidssituasjon">
+            {{#if arbeidssituasjon}}
+                <h2>Arbeidssituasjon</h2>
+                {{#each arbeidssituasjon as |situasjon|~}}
+                    <ul>
+                        <li>{{situasjon.utskriftvennlig}}</li>
+                    </ul>
+                {{/each}}
+            {{/if}}
+        </section>
+
+        <!-- MEDLEMSKAP -->
+        <section id="medlemskap">
+            <h2>Medlemskap</h2>
+            <p class="sporsmalstekst">Har bodd i utlandet siste 12 månedene?</p>
+            {{# if medlemskap.har_bodd_i_utlandet_siste_12_mnd }}
+                <p>Ja</p>
+                <ul>
+                    {{# each medlemskap.utenlandsopphold_siste_12_mnd as |opphold|~}}
+                        <li>
+                            {{opphold.landnavn}} ({{opphold.fraOgMed}} - {{opphold.tilOgMed}})
+                        </li>
+                    {{/each}}
+                </ul>
+            {{else}}
+                <p>Nei</p>{{/if}}
+            <hr />
+            <p class="sporsmalstekst">Skal bo i utlandet de neste 12 månedene?</p>
+            {{# if medlemskap.skal_bo_i_utlandet_neste_12_mnd }}
+                <p>Ja</p>
+                <ul>
+                    {{# each medlemskap.utenlandsopphold_neste_12_mnd as |opphold|~}}
+                        <li>
+                            {{opphold.landnavn}} ({{opphold.fraOgMed}} - {{opphold.tilOgMed}})
+                        </li>
+                    {{/each}}
+                </ul>
+            {{else}}
+                <p>Nei</p>{{/if}}
+        </section>
+
+        <!-- SAMTYKKE -->
+        <section id="samtykke">
+            <h2>Samtykke fra deg</h2>
+            <p class="sporsmalstekst">Har du forstått dine rettigheter og plikter?</p>
+            <p>{{ jaNeiSvar samtykke.harForståttRettigheterOgPlikter }}</p>
+            <hr />
+            <p class="sporsmalstekst">Har du bekreftet at opplysninger som er gitt er riktige?</p>
+            <p>{{ jaNeiSvar samtykke.harBekreftetOpplysninger }}</p>
+        </section>
     </div>
 
-    <!-- SØKNAD -->
-    <h2><span>Melding</span></h2>
-    <p><b>Hvem skal dagene overføres til?</b> {{navnMottaker}} ({{fnrMottaker}})</p>
-    <p><b>Hvor mange dager skal overføres?</b> {{antallDager}}</p>
-    {{#if stengingsperiode}}
-        <p><b>Hvilken periode gjelder overføringen for?</b> {{stengingsperiode}}</p>
-    {{/if}}
-
-
-
-
-    <!-- Fosterbarn -->
-    {{#if fosterbarnListe.fosterbarn}}
-        <h2><span>Fosterbarn</span></h2>
-        {{# each fosterbarnListe.fosterbarn as |barn|}}
-            <img class="ikon" src="{{ image "Personikon.png" }}"/>
-            <div class="persontekst__personalia">
-                <p class="id">
-                    {{ barn.fnr }}
-                </p>
-            </div>
-            <br/>
-        {{/each}}
-    {{/if}}
-
-    <!-- ARBEIDSSITUASJON -->
-    <h2><span>Arbeidssituasjon</span></h2>
-    {{#if arbeidssituasjon}}
-        {{#each arbeidssituasjon as |situasjon|~}}
-            <ul>
-                <li>{{situasjon.utskriftvennlig}}</li>
-            </ul>
-        {{/each}}
-    {{/if}}
-
-    <!-- MEDLEMSKAP -->
-    <h2><span>Medlemskap</span></h2>
-
-    <p class="sporsmalstekst">Har bodd i utlandet siste 12 månedene?</p>
-    {{# if medlemskap.har_bodd_i_utlandet_siste_12_mnd }}
-        <img class="checkbox" src="{{ image "Checkbox_on.png" }}"/> Ja
-        <img class="checkbox" src="{{ image "Checkbox_off.png" }}"/> Nei
-        <ul>
-            {{# each medlemskap.utenlandsopphold_siste_12_mnd as |opphold|~}}
-                <li>
-                    {{opphold.landnavn}} ({{opphold.fraOgMed}} - {{opphold.tilOgMed}})
-                </li>
-            {{/each}}
-        </ul>
-    {{else}}
-        <img class="checkbox" src="{{ image "Checkbox_off.png" }}"/> Ja
-        <img class="checkbox" src="{{ image "Checkbox_on.png" }}"/> Nei
-    {{/if}}
-    <hr/>
-    <p class="sporsmalstekst">Skal bo i utlandet de neste 12 månedene?</p>
-    {{# if medlemskap.skal_bo_i_utlandet_neste_12_mnd }}
-        <img class="checkbox" src="{{ image "Checkbox_on.png" }}"/> Ja
-        <img class="checkbox" src="{{ image "Checkbox_off.png" }}"/> Nei
-        <ul>
-            {{# each medlemskap.utenlandsopphold_neste_12_mnd as |opphold|~}}
-                <li>
-                    {{opphold.landnavn}} ({{opphold.fraOgMed}} - {{opphold.tilOgMed}})
-                </li>
-            {{/each}}
-        </ul>
-    {{else}}
-        <img class="checkbox" src="{{ image "Checkbox_off.png" }}"/> Ja
-        <img class="checkbox" src="{{ image "Checkbox_on.png" }}"/> Nei
-    {{/if}}
-
-    <!-- SAMTYKKE -->
-    <h2><span>Samtykke</span></h2>
-
-    <p class="sporsmalstekst">Har forstått rettigheter og plikter?</p>
-    {{>jaNeiCheckbox parameter=samtykke.harForståttRettigheterOgPlikter}}
-
-    <hr/>
-    <p class="sporsmalstekst">Har bekreftet opplysninger?</p>
-    {{>jaNeiCheckbox parameter=samtykke.harBekreftetOpplysninger}}
-
-</div>
-
-<!-- FOOTER -->
-<div id="footer">
-    <span class="soknadsid">{{ soknad_id }}</span>
-    <span class="sidetall">side <span id="pagenumber"></span> av <span id="pagecount"></span></span>
-</div>
+    <!-- FOOTER -->
+    <p id="footer">
+        <span class="soknadsid">{{ soknad_id }}</span>
+        <span class="sidetall">side <span id="pagenumber"></span> av <span id="pagecount"></span></span>
+    </p>
 </body>
+
 </html>
