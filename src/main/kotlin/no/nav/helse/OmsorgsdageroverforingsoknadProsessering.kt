@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.Application
 import io.ktor.application.ApplicationStopping
 import io.ktor.application.call
@@ -36,14 +35,10 @@ import no.nav.helse.joark.JoarkGateway
 import no.nav.helse.prosessering.v1.PdfV1Generator
 import no.nav.helse.prosessering.v1.PreprosseseringV1Service
 import no.nav.helse.prosessering.v1.asynkron.AsynkronProsesseringV1Service
-import no.nav.helse.prosessering.v1.asynkron.CleanupOverforeDager
-import no.nav.helse.prosessering.v1.asynkron.Data
-import no.nav.helse.prosessering.v1.asynkron.TopicEntry
-import no.nav.helse.prosessering.v1.overforeDager.PreprossesertOverforeDagerV1
-import no.nav.helse.prosessering.v1.overforeDager.SøknadOverføreDagerV1
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
+import java.time.ZonedDateTime
 
 private val logger: Logger = LoggerFactory.getLogger("nav.OmsorgsdageroverforingsoknadProsessering")
 
@@ -91,7 +86,8 @@ fun Application.omsorgsdageroverforingsoknadProsessering() {
         kafkaConfig = configuration.getKafkaConfig(),
         preprosseseringV1Service = preprosseseringV1Service,
         joarkGateway = joarkGateway,
-        dokumentService = dokumentService
+        dokumentService = dokumentService,
+        datoMottattEtter = configuration.soknadDatoMottattEtter()
     )
 
     environment.monitor.subscribe(ApplicationStopping) {
@@ -132,6 +128,8 @@ fun Application.omsorgsdageroverforingsoknadProsessering() {
         )
     }
 }
+
+fun ZonedDateTime.erEtter(zonedDateTime: ZonedDateTime): Boolean = this.isAfter(zonedDateTime)
 
 fun omsorgsdageroverførningKonfigurertMapper(): ObjectMapper {
     return jacksonObjectMapper().dusseldorfConfigured()
