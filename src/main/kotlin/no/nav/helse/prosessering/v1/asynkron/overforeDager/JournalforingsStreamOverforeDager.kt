@@ -44,8 +44,6 @@ internal class JournalforingsStreamOverforeDager(
         private const val NAME = "JournalforingV1OverforeDager"
         private val logger = LoggerFactory.getLogger("no.nav.$NAME.topology")
 
-        private val erJournalført = mutableListOf<String>()
-
         private fun topology(joarkGateway: JoarkGateway, gittDato: ZonedDateTime): Topology {
             val builder = StreamsBuilder()
             val fraPreprossesertV1 = Topics.PREPROSSESERT_OVERFOREDAGER
@@ -80,8 +78,6 @@ internal class JournalforingsStreamOverforeDager(
                             journalpostId = journaPostId.journalpostId,
                                 søknad = preprosessertMelding.tilK9OmsorgspengerOverføringSøknad()
                             )
-
-                        erJournalført.add(entry.metadata.correlationId)
 
                         CleanupOverforeDager(
                             metadata = entry.metadata,
