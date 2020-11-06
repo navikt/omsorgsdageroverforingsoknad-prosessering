@@ -200,7 +200,7 @@ class OmsorgsdageroverforingsoknadProsesseringTest {
     ) : SøknadOverføreDagerV1 = SøknadOverføreDagerV1(
         språk = sprak,
         søknadId = UUID.randomUUID().toString(),
-        mottatt = ZonedDateTime.now().plusDays(1),
+        mottatt = ZonedDateTime.now(),
         søker = Søker(
             aktørId = "123456",
             fødselsnummer = fødselsnummerSoker,

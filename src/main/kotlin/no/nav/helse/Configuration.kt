@@ -8,6 +8,7 @@ import no.nav.helse.dusseldorf.ktor.core.getRequiredString
 import no.nav.helse.kafka.KafkaConfig
 import java.net.URI
 import java.time.Duration
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 @KtorExperimentalAPI
@@ -23,6 +24,8 @@ data class Configuration(private val config : ApplicationConfig) {
         config.getRequiredString("nav.kafka.unready_after_stream_stopped_in.amount", secret = false).toLong(),
         ChronoUnit.valueOf(config.getRequiredString("nav.kafka.unready_after_stream_stopped_in.unit", secret = false))
     )
+
+    internal fun soknadDatoMottattEtter() = ZonedDateTime.parse(config.getRequiredString("nav.prosesser_soknader_mottatt_etter", secret = false))
 
     internal fun getKafkaConfig() = config.getRequiredString("nav.kafka.bootstrap_servers", secret = false).let { bootstrapServers ->
         val trustStore = config.getOptionalString("nav.trust_store.path", secret = false)?.let { trustStorePath ->
