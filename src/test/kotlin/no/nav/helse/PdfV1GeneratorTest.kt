@@ -1,10 +1,14 @@
 package no.nav.helse
 
 import no.nav.helse.prosessering.v1.PdfV1Generator
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.BarnUtvidet
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.MeldingDeleOmsorgsdagerV1
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.Mottaker
 import no.nav.helse.prosessering.v1.overforeDager.*
 import java.io.File
 import java.time.LocalDate
 import java.time.ZonedDateTime
+import java.util.*
 import kotlin.test.Test
 
 class PdfV1GeneratorTest {
@@ -58,10 +62,62 @@ class PdfV1GeneratorTest {
         stengingsperiode = Stengingsperiode.ETTER_AUGUST_9
     )
 
+    fun gyldigMeldingDeleOmsorgsdager() = MeldingDeleOmsorgsdagerV1(
+        søknadId = UUID.randomUUID().toString(),
+        språk = "nb",
+        søker = Søker(
+            aktørId = "123456",
+            fornavn = "Ærling",
+            mellomnavn = "Øverbø",
+            etternavn = "Ånsnes",
+            fødselsnummer = "12345678911",
+            fødselsdato = LocalDate.now().minusYears(18)
+        ),
+        mottatt = ZonedDateTime.now(),
+        id = "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+        harBekreftetOpplysninger = true,
+        harForståttRettigheterOgPlikter = true,
+        barn = listOf(
+            BarnUtvidet(
+                navn = "Rå Alv",
+                fødselsdato = LocalDate.parse("2020-01-01"),
+                identitetsnummer = "02047816826",
+                aktørId = "1234",
+                aleneOmOmsorgen = true,
+                utvidetRett = true
+            ),
+            BarnUtvidet(
+                navn = "Berit Ustad",
+                fødselsdato = LocalDate.parse("2020-01-01"),
+                identitetsnummer = "02047816826",
+                aktørId = "1234",
+                aleneOmOmsorgen = true,
+                utvidetRett = true
+            )
+        ),
+        borINorge = true,
+        arbeiderINorge = true,
+        arbeidssituasjon = listOf(
+            Arbeidssituasjon.ARBEIDSTAKER,
+            Arbeidssituasjon.SELVSTENDIGNÆRINGSDRIVENDE
+        ),
+        antallDagerBruktIÅr = 2,
+        mottakerType = Mottaker.EKTEFELLE,
+        mottakerFnr = "12345678911",
+        mottakerNavn = "Turid Memo",
+        antallDagerSomSkalOverføres = 5
+    )
+
     private fun genererOppsummeringsPdfer(writeBytes: Boolean) {
         var id = "1-full-søknad-overfore-dager"
         var pdf = generator.generateSoknadOppsummeringPdfOverforeDager(
             melding = gyldigSoknadOverforeDager()
+        )
+        if (writeBytes) File(pdfPath(soknadId = id)).writeBytes(pdf)
+
+        id = "2-full-melding-dele-omsorgsdager"
+        pdf = generator.generateOppsummeringPdfDeleOmsorgsdager(
+            melding = gyldigMeldingDeleOmsorgsdager()
         )
         if (writeBytes) File(pdfPath(soknadId = id)).writeBytes(pdf)
     }

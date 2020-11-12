@@ -3,6 +3,8 @@ package no.nav.helse.prosessering.v1.asynkron
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.omsorgsdageroverførningKonfigurertMapper
 import no.nav.helse.prosessering.Metadata
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.MeldingDeleOmsorgsdagerV1
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.PreprosessertDeleOmsorgsdagerV1
 import no.nav.helse.prosessering.v1.overforeDager.PreprossesertOverforeDagerV1
 import no.nav.helse.prosessering.v1.overforeDager.SøknadOverføreDagerV1
 import no.nav.k9.søknad.omsorgspenger.overføring.OmsorgspengerOverføringSøknad
@@ -36,7 +38,6 @@ internal object Topics {
         serDes = SerDes()
     )
 
-
     val CLEANUP_OVERFOREDAGER = Topic(
         name = "privat-overfore-omsorgsdager-soknad-cleanup",
         serDes = SerDes()
@@ -46,6 +47,27 @@ internal object Topics {
         name = "privat-overfore-omsorgsdager-soknad-journalfort",
         serDes = SerDes()
     )
+
+    val MOTTATT_DELE_OMSORGSDAGER = Topic(
+        name = "privat-dele-omsorgsdager-melding-mottatt",
+        serDes = SerDes()
+    )
+
+    val PREPROSESSERT_DELE_OMSORGSDAGER = Topic(
+        name = "privat-dele-omsorgsdager-melding-preprosessert",
+        serDes = SerDes()
+    )
+
+    val CLEANUP_DELE_OMSORGSDAGER = Topic(
+        name = "privat-dele-omsorgsdager-melding-cleanup",
+        serDes = SerDes()
+    )
+
+    val K9_RAPID_V2 = Topic(
+        name = "k9-rapid-v2",
+        serDes = SerDes()
+    )
+
 }
 
 data class Data(val rawJson: String)
@@ -55,16 +77,31 @@ data class CleanupOverforeDager(
     val journalførtMelding: JournalfortOverforeDager
 )
 
+data class CleanupDeleOmsorgsdager(
+    val metadata: Metadata,
+    val meldingV1: PreprosessertDeleOmsorgsdagerV1,
+    val journalpostId: String
+)
+
 class SerDes : Serializer<TopicEntry>, Deserializer<TopicEntry> {
     override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {}
     override fun close() {}
-    override fun serialize(topic: String, entry: TopicEntry): ByteArray = entry.rawJson.toByteArray()
+    override fun serialize(topic: String, entry: TopicEntry): ByteArray = when (topic == Topics.K9_RAPID_V2.name) {
+        true -> entry.data.rawJson.toByteArray()
+        false -> entry.rawJson.toByteArray()
+    }
     override fun deserialize(topic: String, entry: ByteArray): TopicEntry = TopicEntry(String(entry))
 }
 
 internal fun TopicEntry.deserialiserTilSøknadOverføreDagerV1(): SøknadOverføreDagerV1 = omsorgsdageroverførningKonfigurertMapper().readValue(data.rawJson)
 internal fun TopicEntry.deserialiserTilPreprossesertOverforeDagerV1():PreprossesertOverforeDagerV1  = omsorgsdageroverførningKonfigurertMapper().readValue(data.rawJson)
 internal fun TopicEntry.deserialiserTilCleanupOverforeDager():CleanupOverforeDager  = omsorgsdageroverførningKonfigurertMapper().readValue(data.rawJson)
+
+internal fun TopicEntry.deserialiserTilMeldingDeleOmsorgsdagerV1(): MeldingDeleOmsorgsdagerV1 = omsorgsdageroverførningKonfigurertMapper().readValue(data.rawJson)
+internal fun TopicEntry.deserialiserTilPreprosessertDeleOmsorgsdagerV1():PreprosessertDeleOmsorgsdagerV1  = omsorgsdageroverførningKonfigurertMapper().readValue(data.rawJson)
+internal fun TopicEntry.deserialiserTilCleanupDeleOmsorgsdager():CleanupDeleOmsorgsdager  = omsorgsdageroverførningKonfigurertMapper().readValue(data.rawJson)
+
+
 internal fun Any.serialiserTilData() = Data(omsorgsdageroverførningKonfigurertMapper().writeValueAsString(this))
 
 

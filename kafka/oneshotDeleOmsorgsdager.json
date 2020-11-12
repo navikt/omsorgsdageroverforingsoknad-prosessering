@@ -1,0 +1,91 @@
+{
+  "topics": [
+    {
+      "configEntries": {
+        "retention.ms": 2628000000
+      },
+      "members": [
+        {
+          "member": "srvomsover-mtk",
+          "role": "PRODUCER"
+        },
+        {
+          "member": "srvomsover-prs",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "E157419",
+          "role": "MANAGER"
+        },
+        {
+          "member": "F154868",
+          "role": "MANAGER"
+        },
+        {
+          "member": "O158190",
+          "role": "MANAGER"
+        }
+      ],
+      "numPartitions": 3,
+      "topicName": "privat-dele-omsorgsdager-melding-mottatt"
+    },
+    {
+      "configEntries": {
+        "retention.ms": 2628000000
+      },
+      "members": [
+        {
+          "member": "srvomsover-prs",
+          "role": "PRODUCER"
+        },
+        {
+          "member": "srvomsover-prs",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "E157419",
+          "role": "MANAGER"
+        },
+        {
+          "member": "F154868",
+          "role": "MANAGER"
+        },
+        {
+          "member": "O158190",
+          "role": "MANAGER"
+        }
+      ],
+      "numPartitions": 3,
+      "topicName": "privat-dele-omsorgsdager-melding-preprosessert"
+    },
+    {
+      "configEntries": {
+        "retention.ms": 2628000000
+      },
+      "members": [
+        {
+          "member": "srvomsover-prs",
+          "role": "PRODUCER"
+        },
+        {
+          "member": "srvomsover-prs",
+          "role": "CONSUMER"
+        },
+        {
+          "member": "E157419",
+          "role": "MANAGER"
+        },
+        {
+          "member": "F154868",
+          "role": "MANAGER"
+        },
+        {
+          "member": "O158190",
+          "role": "MANAGER"
+        }
+      ],
+      "numPartitions": 3,
+      "topicName": "privat-dele-omsorgsdager-melding-cleanup"
+    }
+  ]
+}

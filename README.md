@@ -2,10 +2,19 @@
 ![CI / CD](https://github.com/navikt/omsorgsdageroverforingsoknad-prosessering/workflows/CI%20/%20CD/badge.svg)
 ![NAIS Alerts](https://github.com/navikt/omsorgsdageroverforingsoknad-prosessering/workflows/Alerts/badge.svg)
 
-Tjeneste som prosesserer søknader om overføring av omsorgsdager
+###Overføring av omsorgsdager
+Tjeneste som prosesserer søknader om overføring av omsorgsdager.
+
 Leser søknader fra Kafka topic `privat-overfore-omsorgsdager-soknad-mottatt` som legges der av [omsorgsdageroverforingsoknad-mottak](https://github.com/navikt/omsorgsdageroverforingsoknad-mottak).
 
 Filtrerer på version 2 i metadata
+
+###Deling av omsorgsdager
+Tjenesten prosesserer meldinger om deling av omsorgsdager.
+
+Leser meldinger fra Kafka topic `privat-dele-omsorgsdager-melding-mottatt` som legges der av [omsorgsdageroverforingsoknad-mottak](https://github.com/navikt/omsorgsdageroverforingsoknad-mottak).
+
+Filtrerer på version 1 i metadata.
 
 ## Prosessering
 - Genererer Søknad-PDF

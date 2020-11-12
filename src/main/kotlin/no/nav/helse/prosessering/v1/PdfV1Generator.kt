@@ -8,9 +8,12 @@ import com.github.jknack.handlebars.io.ClassPathTemplateLoader
 import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder
 import no.nav.helse.dusseldorf.ktor.core.fromResources
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.BarnUtvidet
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.MeldingDeleOmsorgsdagerV1
 import no.nav.helse.prosessering.v1.overforeDager.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -19,6 +22,7 @@ internal class PdfV1Generator {
     private companion object {
         private const val ROOT = "handlebars"
         private const val SOKNAD_OVERFOREDAGER = "soknadOverforeDager"
+        private const val MELDING_DELE_OMSORGSDAGER = "meldingDeleOmsorgsdager"
 
         private val REGULAR_FONT = "$ROOT/fonts/SourceSansPro-Regular.ttf".fromResources().readBytes()
         private val BOLD_FONT = "$ROOT/fonts/SourceSansPro-Bold.ttf".fromResources().readBytes()
@@ -52,6 +56,7 @@ internal class PdfV1Generator {
         }
 
         private val soknadOverforeDagerTemplate = handlebars.compile(SOKNAD_OVERFOREDAGER)
+        private val meldingDeleOmsorgsdagerTemplate = handlebars.compile(MELDING_DELE_OMSORGSDAGER)
 
         private val ZONE_ID = ZoneId.of("Europe/Oslo")
         private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").withZone(ZONE_ID)
@@ -129,6 +134,63 @@ internal class PdfV1Generator {
         }
     }
 
+    internal fun generateOppsummeringPdfDeleOmsorgsdager(
+        melding: MeldingDeleOmsorgsdagerV1
+    ): ByteArray {
+        meldingDeleOmsorgsdagerTemplate.apply(
+            Context
+                .newBuilder(
+                    mapOf(
+                        "soknad_id" to melding.søknadId,
+                        "soknad_mottatt_dag" to melding.mottatt.withZoneSameInstant(ZONE_ID).norskDag(),
+                        "soknad_mottatt" to DATE_TIME_FORMATTER.format(melding.mottatt),
+                        "søker" to mapOf(
+                            "navn" to melding.søker.formatertNavn(),
+                            "fødselsnummer" to melding.søker.fødselsnummer
+                        ),
+                        "id" to melding.id,
+                        "borINorge" to melding.borINorge,
+                        "barn" to melding.barn.somMap(),
+                        "arbeiderINorge" to melding.arbeiderINorge,
+                        "arbeidssituasjon" to melding.arbeidssituasjon.somMapUtskriftvennlig(),
+                        "antallDagerBruktIÅr" to melding.antallDagerBruktIÅr,
+                        "antallDagerSomSkalOverføres" to melding.antallDagerSomSkalOverføres,
+                        "mottaker" to mapOf(
+                            "type" to melding.mottakerType.utskriftsvennlig,
+                            "fnr" to melding.mottakerFnr,
+                            "navn" to melding.mottakerNavn
+                        ),
+                        "samtykke" to mapOf(
+                            "harForståttRettigheterOgPlikter" to melding.harForståttRettigheterOgPlikter,
+                            "harBekreftetOpplysninger" to melding.harBekreftetOpplysninger
+                        ),
+                        "hjelp" to mapOf(
+                            "språk" to melding.språk?.sprakTilTekst(),
+                            "harBruktDagerIÅr" to harBruktDagerIÅr(melding.antallDagerBruktIÅr),
+                            "erDet2020Fortsatt" to sjekkOmDetEr2020()
+                        )
+                    )
+                )
+                .resolver(MapValueResolver.INSTANCE)
+                .build()
+        ).let { html ->
+            val outputStream = ByteArrayOutputStream()
+
+            PdfRendererBuilder()
+                .useFastMode()
+                .usePdfUaAccessbility(true)
+                .withHtmlContent(html, "")
+                .medFonter()
+                .toStream(outputStream)
+                .buildPdfRenderer()
+                .createPDF()
+
+            return outputStream.use {
+                it.toByteArray()
+            }
+        }
+    }
+
     private fun PdfRendererBuilder.medFonter() =
         useFont(
             { ByteArrayInputStream(REGULAR_FONT) },
@@ -153,6 +215,9 @@ internal class PdfV1Generator {
             )
 }
 
+private fun sjekkOmDetEr2020(): Boolean = LocalDate.now().year == 2020 //TODO: Dette kan fjernes etter 1.1.2021 og oppdateres i pdf
+private fun harBruktDagerIÅr(antallDagerBruktIÅr: Int): Boolean = antallDagerBruktIÅr > 0
+
 private fun List<Arbeidssituasjon>.somMapUtskriftvennlig(): List<Map<String, Any?>> {
     return map {
         mapOf(
@@ -170,6 +235,19 @@ private fun List<Utenlandsopphold>.somMapUtenlandsopphold(): List<Map<String, An
             "tilOgMed" to dateFormatter.format(it.tilOgMed)
         )
     }
+}
+
+private fun List<BarnUtvidet>.somMap(): List<Map<String, Any?>>{
+    return map{
+        mapOf<String, Any?>(
+            "navn" to it.navn,
+            "fødselsdato" to DateTimeFormatter.ofPattern("dd.MM.yyyy").format(it.fødselsdato),
+            "fnr" to it.identitetsnummer,
+            "aleneOmOmsorgen" to it.aleneOmOmsorgen,
+            "utvidetRett" to it.utvidetRett
+        )
+    }
+
 }
 
 private fun List<Fosterbarn>.somMapFosterbarn(): List<Map<String, Any?>> {

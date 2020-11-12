@@ -5,10 +5,15 @@ import no.nav.common.KafkaEnvironment
 import no.nav.helse.prosessering.Metadata
 import no.nav.helse.prosessering.v1.asynkron.Data
 import no.nav.helse.prosessering.v1.asynkron.TopicEntry
+import no.nav.helse.prosessering.v1.asynkron.Topics.CLEANUP_DELE_OMSORGSDAGER
 import no.nav.helse.prosessering.v1.asynkron.Topics.CLEANUP_OVERFOREDAGER
 import no.nav.helse.prosessering.v1.asynkron.Topics.JOURNALFORT_OVERFOREDAGER
+import no.nav.helse.prosessering.v1.asynkron.Topics.K9_RAPID_V2
+import no.nav.helse.prosessering.v1.asynkron.Topics.MOTTATT_DELE_OMSORGSDAGER
 import no.nav.helse.prosessering.v1.asynkron.Topics.MOTTATT_OVERFOREDAGER
+import no.nav.helse.prosessering.v1.asynkron.Topics.PREPROSESSERT_DELE_OMSORGSDAGER
 import no.nav.helse.prosessering.v1.asynkron.Topics.PREPROSSESERT_OVERFOREDAGER
+import no.nav.helse.prosessering.v1.deleOmsorgsdager.MeldingDeleOmsorgsdagerV1
 import no.nav.helse.prosessering.v1.overforeDager.SøknadOverføreDagerV1
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -36,7 +41,11 @@ object KafkaWrapper {
                 MOTTATT_OVERFOREDAGER.name,
                 PREPROSSESERT_OVERFOREDAGER.name,
                 JOURNALFORT_OVERFOREDAGER.name,
-                CLEANUP_OVERFOREDAGER.name
+                CLEANUP_OVERFOREDAGER.name,
+                MOTTATT_DELE_OMSORGSDAGER.name,
+                PREPROSESSERT_DELE_OMSORGSDAGER.name,
+                CLEANUP_DELE_OMSORGSDAGER.name,
+                K9_RAPID_V2.name
             )
         )
         return kafkaEnvironment
@@ -79,10 +88,26 @@ fun KafkaEnvironment.journalføringsKonsumerOverforeDager(): KafkaConsumer<Strin
     return consumer
 }
 
+fun KafkaEnvironment.k9RapidConsumer(): KafkaConsumer<String, String> {
+    val consumer = KafkaConsumer(
+        testConsumerProperties("K9 Rapid Consumer"),
+        StringDeserializer(),
+        StringDeserializer()
+    )
+    consumer.subscribe(listOf(K9_RAPID_V2.name))
+    return consumer
+}
+
 fun KafkaEnvironment.meldingOverforeDagersProducer() = KafkaProducer(
     testProducerProperties("OmsorgspengesoknadOverføreDagerProsesseringTestProducer"),
     MOTTATT_OVERFOREDAGER.keySerializer,
     MOTTATT_OVERFOREDAGER.serDes
+)
+
+fun KafkaEnvironment.meldingDeleOmsorgsdagerProducer() = KafkaProducer(
+    testProducerProperties("DeleOmsorgsdagerProsesseringTestProducer"),
+    MOTTATT_DELE_OMSORGSDAGER.keySerializer,
+    MOTTATT_DELE_OMSORGSDAGER.serDes
 )
 
 fun KafkaConsumer<String, String>.hentJournalførtMeldingOverforeDager(
@@ -104,6 +129,25 @@ fun KafkaConsumer<String, String>.hentJournalførtMeldingOverforeDager(
     throw IllegalStateException("Fant ikke opprettet oppgave for søknad $soknadId etter $maxWaitInSeconds sekunder.")
 }
 
+fun KafkaConsumer<String, String>.hentK9RapidMelding(
+    id: String,
+    maxWaitInSeconds: Long = 20
+): String {
+    val end = System.currentTimeMillis() + Duration.ofSeconds(maxWaitInSeconds).toMillis()
+    while (System.currentTimeMillis() < end) {
+        seekToBeginning(assignment())
+        val entries = poll(Duration.ofSeconds(1))
+            .records(K9_RAPID_V2.name).toList()
+            .filter { it.key() == id }
+
+        if (entries.isNotEmpty()) {
+            assertEquals(1, entries.size)
+            return entries.first().value()
+        }
+    }
+    throw IllegalStateException("Fant ikke opprettet oppgave for melding med id: $id etter $maxWaitInSeconds sekunder.")
+}
+
 fun KafkaProducer<String, TopicEntry>.leggTilMottak(soknad: SøknadOverføreDagerV1) {
     send(
         ProducerRecord(
@@ -112,6 +156,23 @@ fun KafkaProducer<String, TopicEntry>.leggTilMottak(soknad: SøknadOverføreDage
             TopicEntry(
                 metadata = Metadata(
                     version = 2,
+                    correlationId = UUID.randomUUID().toString(),
+                    requestId = UUID.randomUUID().toString()
+                ),
+                data = Data(omsorgsdageroverførningKonfigurertMapper().writeValueAsString(soknad))
+            )
+        )
+    ).get()
+}
+
+fun KafkaProducer<String, TopicEntry>.leggTilMottakDeleOmsorgsdager(soknad: MeldingDeleOmsorgsdagerV1) {
+    send(
+        ProducerRecord(
+            MOTTATT_DELE_OMSORGSDAGER.name,
+            soknad.søknadId,
+            TopicEntry(
+                metadata = Metadata(
+                    version = 1,
                     correlationId = UUID.randomUUID().toString(),
                     requestId = UUID.randomUUID().toString()
                 ),

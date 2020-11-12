@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="NO">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Melding om deling av omsorgsdager</title>
+    <meta name="subject" content="Melding om deling av omsorgsdager" />
+    <meta name="author" content="nav.no" />
+    <meta name="description"
+          content="Melding om deling av omsorgsdager mottatt {{soknad_mottatt_dag}} {{ soknad_mottatt }}" />
+    <bookmarks>
+        <bookmark name="Søker" href="#søker" />
+        <bookmark name="Samtykke" href="#samtykke" />
+        <bookmark name="Barn" href="#barn" />
+        <bookmark name="Din situasjon" href="#dinSituasjon" />
+        <bookmark name="Mottaker" href="#mottaker" />
+    </bookmarks>
+    {{#block 'style-common' }}
+    {{/block}}
+</head>
+
+<body>
+<h1 id="header">
+    Melding om deling av omsorgsdager
+</h1>
+<p class="nokkelinfo">
+    <strong>Sendt til NAV</strong>
+    {{soknad_mottatt_dag}} {{ soknad_mottatt }}
+</p>
+
+<div class="innholdscontainer">
+    <div class="person" id="søker">
+        <p class="navn">{{ søker.navn }}</p>
+        <p>{{ søker.fødselsnummer }}<br /></p>
+    </div>
+
+    <!-- BARN -->
+    <section id="barn">
+        <h2>Dine barn</h2>
+        {{#each barn as | barn|~}}
+            <ul>
+                <li>
+                    <p><b>{{barn.navn}} (født {{barn.fødselsdato}}, fødselsnummer {{barn.fnr}})</b></p>
+                    {{#if barn.aleneOmOmsorgen}}
+                        <p>Du er alene om omsorgen for dette barnet.</p>
+                    {{/if}}
+                    {{#if barn.utvidetRett}}
+                        <p>Du har fått ekstra omsorgsdager fordi barnet har en kronisk sykdom eller funksjonshemning.</p>
+                    {{/if}}
+                </li>
+            </ul>
+        {{/each}}
+    </section>
+
+    <!-- DIN_SITUASJON -->
+    <section id="dinSituasjon">
+        <h2>Din situasjon</h2>
+        <p class="sporsmalstekst">Bor du i Norge?</p>
+        <p>{{ jaNeiSvar borINorge}}</p>
+        <p class="sporsmalstekst">Arbeider du i Norge</p>
+        <p>{{ jaNeiSvar arbeiderINorge}}</p>
+        <p class="sporsmalstekst">Hva er din arbeidssituasjon?</p>
+        <p>
+            {{#if arbeidssituasjon}}
+                {{#each arbeidssituasjon as |situasjon|~}}
+                    <ul>
+                        <li>{{situasjon.utskriftvennlig}}</li>
+                    </ul>
+                {{/each}}
+            {{/if}}
+        </p>
+        {{#if hjelp.harBruktDagerIÅr}}
+            {{#if hjelp.erDet2020Fortsatt}}
+                <p class="sporsmalstekst">Hvor mange omsorgsdager har du brukt etter 1. juli 2020?</p>
+            {{else}}
+                <p class="sporsmalstekst">Hvor mange omsorgsdager har du brukt i år?</p>
+            {{/if}}
+            <p>{{antallDagerBruktIÅr}}</p>
+        {{/if}}
+
+    </section>
+
+    <!-- MOTTAKER-->
+    <section id="mottaker">
+        <h2>Overføring av omsorgsdager</h2>
+        <p class="sporsmalstekst">Hvem skal du overføre omsorgsdagene til?</p>
+        <p>{{mottaker.navn}} ({{mottaker.type}})</p>
+        <p>Fødselsnummer: {{mottaker.fnr}}</p>
+        <p class="sporsmalstekst">Hvor mange omsorgsdager vil du overføre?</p>
+        <p>{{antallDagerSomSkalOverføres}} dager</p>
+
+    </section>
+
+    <!-- SAMTYKKE -->
+    <section id="samtykke">
+        <h2>Samtykke fra deg</h2>
+        <p class="sporsmalstekst">Har du forstått dine rettigheter og plikter?</p>
+        <p>{{ jaNeiSvar samtykke.harForståttRettigheterOgPlikter }}</p>
+        <hr />
+        <p class="sporsmalstekst">Har du bekreftet at opplysninger som er gitt er riktige?</p>
+        <p>{{ jaNeiSvar samtykke.harBekreftetOpplysninger }}</p>
+    </section>
+
+</div>
+
+<!-- FOOTER -->
+<p id="footer">
+    <span class="soknadsid">{{ soknad_id }}</span>
+    <span class="soknadsid">{{ id }}</span> <!-- BehovssekvensID -->
+    <span class="sidetall">side <span id="pagenumber"></span> av <span id="pagecount"></span></span>
+</p>
+</body>
+
+</html>
