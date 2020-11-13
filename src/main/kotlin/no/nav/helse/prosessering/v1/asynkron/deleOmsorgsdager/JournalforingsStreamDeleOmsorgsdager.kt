@@ -49,7 +49,7 @@ internal class JournalforingsStreamDeleOmsorgsdager(
                         val dokumenter = preprosessertMelding.dokumentUrls
                         logger.trace("Journalfører deling av omsorgsdager dokumenter: {}", dokumenter)
 
-                        val journalPostId = joarkGateway.journalførOverforeDager(
+                        val journalPostId = joarkGateway.journalførDeleDager(
                             mottatt = preprosessertMelding.mottatt,
                             aktørId = AktørId(preprosessertMelding.søker.aktørId),
                             norskIdent = preprosessertMelding.søker.fødselsnummer,
