@@ -149,7 +149,6 @@ internal class PdfV1Generator {
                             "fødselsnummer" to melding.søker.fødselsnummer
                         ),
                         "id" to melding.id,
-                        "borINorge" to melding.borINorge,
                         "barn" to melding.barn.somMap(),
                         "arbeiderINorge" to melding.arbeiderINorge,
                         "arbeidssituasjon" to melding.arbeidssituasjon.somMapUtskriftvennlig(),

@@ -187,7 +187,6 @@ class DeleOmsorgsdagerProsesseringTest {
                 utvidetRett = false
             )
         ),
-        borINorge = true,
         arbeiderINorge = true,
         arbeidssituasjon = listOf(
             Arbeidssituasjon.ARBEIDSTAKER

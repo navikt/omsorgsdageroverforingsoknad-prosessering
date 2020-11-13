@@ -125,7 +125,6 @@ class K9BehovssekvensTest {
                             utvidetRett = true
                         )
                     ),
-                    borINorge = true,
                     arbeiderINorge = true,
                     arbeidssituasjon = listOf(
                         Arbeidssituasjon.ARBEIDSTAKER

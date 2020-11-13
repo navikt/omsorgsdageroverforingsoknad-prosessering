@@ -95,7 +95,6 @@ class PdfV1GeneratorTest {
                 utvidetRett = true
             )
         ),
-        borINorge = true,
         arbeiderINorge = true,
         arbeidssituasjon = listOf(
             Arbeidssituasjon.ARBEIDSTAKER,

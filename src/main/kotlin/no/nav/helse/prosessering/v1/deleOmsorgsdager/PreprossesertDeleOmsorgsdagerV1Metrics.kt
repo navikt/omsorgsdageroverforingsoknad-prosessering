@@ -28,7 +28,6 @@ internal fun PreprosessertDeleOmsorgsdagerV1.reportMetrics() {
     jaNeiDeleDagerCounter.labels("utvidetRett", barn.harNoenUtvidetRett().tilJaEllerNei()).inc()
     jaNeiDeleDagerCounter.labels("fordelingSamboerEllerEktefelle", mottakerType.name).inc()
     jaNeiDeleDagerCounter.labels("brukteDager", (antallDagerBruktIÅr > 0).tilJaEllerNei()).inc()
-    if(arbeiderINorge && !borINorge) jaNeiDeleDagerCounter.labels("Jobber i Norge, men bor ikke i Norge", "Ja").inc()
 }
 
 private fun Boolean.tilJaEllerNei(): String = if (this) "Ja" else "Nei"
