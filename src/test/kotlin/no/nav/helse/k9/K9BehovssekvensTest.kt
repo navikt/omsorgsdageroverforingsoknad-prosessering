@@ -141,6 +141,7 @@ class K9BehovssekvensTest {
             ),
             journalpostId = "123"
         )
+        val mottatt = LocalDate.now()
         val forventetBehovssekvensJson =
         //language=json
             """
@@ -175,7 +176,7 @@ class K9BehovssekvensTest {
                     "identitetsnummer": "19066672169",
                     "relasjon": "NåværendeSamboer"
                   },
-                  "mottaksdato": "2020-11-12",
+                  "mottaksdato": $mottatt,
                   "omsorgsdagerÅOverføre": 5,
                   "kilde": "Digital",
                   "omsorgsdagerTattUtIÅr": 3,
