@@ -104,7 +104,8 @@ class PdfV1GeneratorTest {
         mottakerType = Mottaker.EKTEFELLE,
         mottakerFnr = "12345678911",
         mottakerNavn = "Turid Memo",
-        antallDagerSomSkalOverføres = 5
+        antallDagerSomSkalOverføres = 5,
+        erYrkesaktiv = true
     )
 
     private fun genererOppsummeringsPdfer(writeBytes: Boolean) {

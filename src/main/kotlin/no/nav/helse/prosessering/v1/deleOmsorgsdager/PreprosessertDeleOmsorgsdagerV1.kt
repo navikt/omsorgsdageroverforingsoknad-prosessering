@@ -22,7 +22,8 @@ data class PreprosessertDeleOmsorgsdagerV1(
     val mottakerType: Mottaker,
     val mottakerFnr: String,
     val mottakerNavn: String,
-    val antallDagerSomSkalOverføres: Int
+    val antallDagerSomSkalOverføres: Int,
+    val erYrkesaktiv: Boolean
     ) {
     internal constructor(
         melding: MeldingDeleOmsorgsdagerV1,
@@ -44,7 +45,8 @@ data class PreprosessertDeleOmsorgsdagerV1(
         mottakerType = melding.mottakerType,
         mottakerFnr = melding.mottakerFnr,
         mottakerNavn = melding.mottakerNavn,
-        antallDagerSomSkalOverføres = melding.antallDagerSomSkalOverføres
+        antallDagerSomSkalOverføres = melding.antallDagerSomSkalOverføres,
+        erYrkesaktiv = melding.erYrkesaktiv
     )
 }
 

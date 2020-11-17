@@ -154,6 +154,7 @@ internal class PdfV1Generator {
                         "arbeidssituasjon" to melding.arbeidssituasjon.somMapUtskriftvennlig(),
                         "antallDagerBruktIÅr" to melding.antallDagerBruktIÅr,
                         "antallDagerSomSkalOverføres" to melding.antallDagerSomSkalOverføres,
+                        "erYrkesaktiv" to melding.erYrkesaktiv,
                         "mottaker" to mapOf(
                             "type" to melding.mottakerType.utskriftsvennlig,
                             "fnr" to melding.mottakerFnr,

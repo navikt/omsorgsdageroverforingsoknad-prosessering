@@ -195,7 +195,8 @@ class DeleOmsorgsdagerProsesseringTest {
         mottakerType = Mottaker.SAMBOER,
         mottakerFnr = "$gyldigFodselsnummerB",
         mottakerNavn = "Navn Mottaker",
-        antallDagerSomSkalOverføres = 5
+        antallDagerSomSkalOverføres = 5,
+        erYrkesaktiv = true
     )
 
     private fun readyGir200HealthGir503() {

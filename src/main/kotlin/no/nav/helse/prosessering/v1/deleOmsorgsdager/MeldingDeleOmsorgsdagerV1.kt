@@ -22,7 +22,8 @@ data class MeldingDeleOmsorgsdagerV1(
     val mottakerType: Mottaker,
     val mottakerFnr: String,
     val mottakerNavn: String,
-    val antallDagerSomSkalOverføres: Int
+    val antallDagerSomSkalOverføres: Int,
+    val erYrkesaktiv: Boolean
 )
 
 enum class Mottaker(val utskriftsvennlig: String) {

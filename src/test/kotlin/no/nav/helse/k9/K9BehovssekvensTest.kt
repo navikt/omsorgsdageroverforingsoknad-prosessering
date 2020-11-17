@@ -133,14 +133,15 @@ class K9BehovssekvensTest {
                     mottakerType = Mottaker.SAMBOER,
                     mottakerFnr = gyldigFodselsnummerB,
                     mottakerNavn = "Navn Mottaker",
-                    antallDagerSomSkalOverføres = 5
+                    antallDagerSomSkalOverføres = 5,
+                    erYrkesaktiv = true
                 ),
                 søkerAktørId = AktørId("1234"),
                 dokumentUrls = listOf()
             ),
             journalpostId = "123"
         )
-        val mottatt = LocalDate.now()
+
         val forventetBehovssekvensJson =
         //language=json
             """
@@ -175,13 +176,14 @@ class K9BehovssekvensTest {
                     "identitetsnummer": "19066672169",
                     "relasjon": "NåværendeSamboer"
                   },
-                  "mottaksdato": $mottatt,
+                  "mottatt": "2020-01-01T12:00:00Z",
                   "omsorgsdagerÅOverføre": 5,
                   "kilde": "Digital",
                   "omsorgsdagerTattUtIÅr": 3,
                   "journalpostIder": [
                     "123"
-                  ]
+                  ],
+                  "versjon" : "1.0.0"
                 }
               },
               "@versjon": "1",

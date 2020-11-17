@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "1.3.2.4e29fb7"
-val k9RapidOverforeOmsorgsdagerVersion = "1.31aa518"
+val k9RapidOverforeOmsorgsdagerVersion = "1.f3af2d5"
 val k9FormatVersion = "3.0.0.f5ec313"
 val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()

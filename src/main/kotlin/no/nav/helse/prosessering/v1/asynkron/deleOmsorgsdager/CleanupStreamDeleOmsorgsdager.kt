@@ -111,7 +111,8 @@ internal fun CleanupDeleOmsorgsdager.tilK9Behovssekvens(): Behovssekvens {
                 omsorgsdagerÅOverføre = omsorgsdagerÅOverføre,
                 barn = listeOverBarn,
                 kilde = kilde,
-                journalpostIder = journalPostIdListe
+                journalpostIder = journalPostIdListe,
+                mottatt = melding.mottatt
             )
         )
     )
