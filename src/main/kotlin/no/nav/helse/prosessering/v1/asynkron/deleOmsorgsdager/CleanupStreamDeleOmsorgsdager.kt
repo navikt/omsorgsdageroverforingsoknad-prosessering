@@ -78,7 +78,7 @@ internal class CleanupStreamDeleOmsorgsdager(
 
 internal fun CleanupDeleOmsorgsdager.tilK9Behovssekvens(): Behovssekvens {
     val correlationId = this.metadata.correlationId
-    val journalPostIdListe = listOf(this.journalpostId)
+    val journalPostIdListe = listOf(this.journalførtMelding.journalpostId)
     val melding = this.meldingV1
 
     val overførerFra: OverføreOmsorgsdagerBehov.OverførerFra = OverføreOmsorgsdagerBehov.OverførerFra(

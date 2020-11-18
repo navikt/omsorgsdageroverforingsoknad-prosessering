@@ -3,6 +3,7 @@ package no.nav.helse.k9
 import no.nav.helse.aktoer.AktørId
 import no.nav.helse.prosessering.Metadata
 import no.nav.helse.prosessering.v1.asynkron.CleanupDeleOmsorgsdager
+import no.nav.helse.prosessering.v1.asynkron.JournalfortDeleDager
 import no.nav.helse.prosessering.v1.asynkron.deleOmsorgsdager.tilK9BarnListe
 import no.nav.helse.prosessering.v1.asynkron.deleOmsorgsdager.tilK9Behovssekvens
 import no.nav.helse.prosessering.v1.deleOmsorgsdager.BarnUtvidet
@@ -139,7 +140,7 @@ class K9BehovssekvensTest {
                 søkerAktørId = AktørId("1234"),
                 dokumentUrls = listOf()
             ),
-            journalpostId = "123"
+            journalførtMelding = JournalfortDeleDager("123")
         )
 
         val forventetBehovssekvensJson =

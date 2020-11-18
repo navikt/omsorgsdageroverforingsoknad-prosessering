@@ -64,10 +64,12 @@ internal class JournalforingsStreamDeleOmsorgsdager(
 
                         logger.trace("Dokumenter til deling av  omsorgsdager journalført med ID = ${journalPostId.journalpostId}.")
 
+                        val journalførtMelding = JournalfortDeleDager(journalpostId = journalPostId.journalpostId)
+
                         CleanupDeleOmsorgsdager(
                             metadata = entry.metadata,
                             meldingV1 = preprosessertMelding,
-                            journalpostId = journalPostId.journalpostId
+                            journalførtMelding = journalførtMelding
                         ).serialiserTilData()
                     }
                 }

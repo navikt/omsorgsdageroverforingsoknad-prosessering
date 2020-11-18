@@ -80,7 +80,7 @@ data class CleanupOverforeDager(
 data class CleanupDeleOmsorgsdager(
     val metadata: Metadata,
     val meldingV1: PreprosessertDeleOmsorgsdagerV1,
-    val journalpostId: String
+    val journalførtMelding: JournalfortDeleDager
 )
 
 class SerDes : Serializer<TopicEntry>, Deserializer<TopicEntry> {
@@ -106,6 +106,7 @@ internal fun Any.serialiserTilData() = Data(omsorgsdageroverførningKonfigurertM
 
 
 data class JournalfortOverforeDager(val journalpostId: String, val søknad: OmsorgspengerOverføringSøknad)
+data class JournalfortDeleDager(val journalpostId: String)
 
 data class TopicEntry(val rawJson: String) {
     constructor(metadata: Metadata, data: Data) : this(
