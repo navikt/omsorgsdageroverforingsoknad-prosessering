@@ -9,18 +9,23 @@ import no.nav.helse.kafka.ManagedKafkaStreams
 import no.nav.helse.kafka.ManagedStreamHealthy
 import no.nav.helse.kafka.ManagedStreamReady
 import no.nav.helse.prosessering.v1.asynkron.*
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.slf4j.LoggerFactory
 
 internal class JournalforingsStreamDeleOmsorgsdager(
     joarkGateway: JoarkGateway,
-    kafkaConfig: KafkaConfig
+    kafkaConfig: KafkaConfig,
+    autoOffsetResetDeleDager: String
 ) {
 
     private val stream = ManagedKafkaStreams(
         name = NAME,
-        properties = kafkaConfig.stream(NAME),
+        properties = kafkaConfig.stream(NAME).let {
+            it.replace(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetResetDeleDager)
+            it
+        },
         topology = topology(joarkGateway),
         unreadyAfterStreamStoppedIn = kafkaConfig.unreadyAfterStreamStoppedIn
     )

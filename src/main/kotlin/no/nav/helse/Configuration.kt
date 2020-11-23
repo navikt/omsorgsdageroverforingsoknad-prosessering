@@ -27,6 +27,8 @@ data class Configuration(private val config : ApplicationConfig) {
 
     internal fun soknadDatoMottattEtter() = ZonedDateTime.parse(config.getRequiredString("nav.prosesser_soknader_mottatt_etter", secret = false))
 
+    internal fun getAutoOffsetResetDeleDager() = config.getRequiredString("nav.kafka.auto_offset_reset_dele_dager", secret = false)
+
     internal fun getKafkaConfig() = config.getRequiredString("nav.kafka.bootstrap_servers", secret = false).let { bootstrapServers ->
         val trustStore = config.getOptionalString("nav.trust_store.path", secret = false)?.let { trustStorePath ->
             config.getOptionalString("nav.trust_store.password", secret = true)?.let { trustStorePassword ->

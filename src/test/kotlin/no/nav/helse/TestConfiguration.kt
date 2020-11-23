@@ -24,8 +24,10 @@ object TestConfiguration {
             Pair("nav.aktoer_register_base_url","$aktoerRegisterBaseUrl"),
             Pair("nav.tps_proxy_v1_base_url","$tpsProxyBaseUrl"),
             Pair("nav.K9_JOARK_BASE_URL","$omsorgspengerJoarkBaseUrl"),
-            Pair("nav.k9_dokument_base_url","$k9DokumentBaseUrl")
+            Pair("nav.k9_dokument_base_url","$k9DokumentBaseUrl"),
+            Pair("nav.kafka.auto_offset_reset_dele_dager","earliest")
         )
+
 
         // Clients
         if (wireMockServer != null) {

@@ -94,7 +94,8 @@ fun Application.omsorgsdageroverforingsoknadProsessering() {
         preprosesseringV1Service = preprosesseringV1Service,
         joarkGateway = joarkGateway,
         dokumentService = dokumentService,
-        datoMottattEtter = configuration.soknadDatoMottattEtter()
+        datoMottattEtter = configuration.soknadDatoMottattEtter(),
+        autoOffsetResetDeleDager = configuration.getAutoOffsetResetDeleDager()
     )
 
     environment.monitor.subscribe(ApplicationStopping) {

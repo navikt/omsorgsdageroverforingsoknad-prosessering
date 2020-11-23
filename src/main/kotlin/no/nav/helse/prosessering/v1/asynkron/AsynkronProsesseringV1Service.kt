@@ -18,7 +18,8 @@ internal class AsynkronProsesseringV1Service(
     preprosesseringV1Service: PreprosesseringV1Service,
     joarkGateway: JoarkGateway,
     dokumentService: DokumentService,
-    datoMottattEtter: ZonedDateTime
+    datoMottattEtter: ZonedDateTime,
+    autoOffsetResetDeleDager: String
 ) {
 
     private companion object {
@@ -45,17 +46,20 @@ internal class AsynkronProsesseringV1Service(
 
     private val preprosesseringStreamDeleOmsorgsdager = PreprosesseringStreamDeleOmsorgsdager(
         kafkaConfig = kafkaConfig,
-        preprosesseringV1Service = preprosesseringV1Service
+        preprosesseringV1Service = preprosesseringV1Service,
+        autoOffsetResetDeleDager = autoOffsetResetDeleDager
     )
 
     private val journalforingsStreamDeleOmsorgsdager = JournalforingsStreamDeleOmsorgsdager(
         kafkaConfig = kafkaConfig,
-        joarkGateway = joarkGateway
+        joarkGateway = joarkGateway,
+        autoOffsetResetDeleDager = autoOffsetResetDeleDager
     )
 
     private val cleanupStreamDeleOmsorgsdager = CleanupStreamDeleOmsorgsdager(
         kafkaConfig = kafkaConfig,
-        dokumentService = dokumentService
+        dokumentService = dokumentService,
+        autoOffsetResetDeleDager = autoOffsetResetDeleDager
     )
 
     private val healthChecks = setOf(

@@ -12,6 +12,7 @@ import no.nav.helse.prosessering.v1.deleOmsorgsdager.BarnUtvidet
 import no.nav.helse.prosessering.v1.deleOmsorgsdager.Mottaker
 import no.nav.k9.rapid.behov.Behovssekvens
 import no.nav.k9.rapid.behov.OverføreOmsorgsdagerBehov
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.slf4j.LoggerFactory
@@ -19,11 +20,15 @@ import org.slf4j.LoggerFactory
 
 internal class CleanupStreamDeleOmsorgsdager(
     kafkaConfig: KafkaConfig,
-    dokumentService: DokumentService
+    dokumentService: DokumentService,
+    autoOffsetResetDeleDager: String
 ) {
     private val stream = ManagedKafkaStreams(
         name = NAME,
-        properties = kafkaConfig.stream(NAME),
+        properties = kafkaConfig.stream(NAME).let {
+            it.replace(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetResetDeleDager)
+            it
+        },
         topology = topology(dokumentService),
         unreadyAfterStreamStoppedIn = kafkaConfig.unreadyAfterStreamStoppedIn
     )
