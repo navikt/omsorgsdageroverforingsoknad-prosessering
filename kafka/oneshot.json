@@ -2,7 +2,7 @@
   "topics": [
     {
       "configEntries": {
-        "retention.ms": -1
+        "retention.ms": 2628000000
       },
       "members": [
         {
@@ -39,7 +39,7 @@
     },
     {
       "configEntries": {
-        "retention.ms": -1
+        "retention.ms": 2628000000
       },
       "members": [
         {
@@ -76,7 +76,7 @@
     },
     {
       "configEntries": {
-        "retention.ms": -1
+        "retention.ms": 2628000000
       },
       "members": [
         {
